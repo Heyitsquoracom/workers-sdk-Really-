@@ -171,8 +171,8 @@ async function exportRemotely(
 	logger.log(`🌀 Executing on remote database ${name} (${db.uuid}):`);
 	logger.log(`🌀 Creating export...`);
 	const dumpOptions = {
-		noSchema,
-		noData,
+		no_schema: noSchema,
+		no_data: noData,
 		tables,
 	};
 
@@ -185,10 +185,10 @@ async function exportRemotely(
 	logger.log(`🌀 Downloading SQL to ${output}...`);
 	logger.log(
 		chalk.gray(
-			`You can also download your export from the following URL manually. This link will be valid for one hour: ${finalResponse.result.signedUrl}`
+			`You can also download your export from the following URL manually. This link will be valid for one hour: ${finalResponse.result.signed_url}`
 		)
 	);
-	const contents = await fetch(finalResponse.result.signedUrl);
+	const contents = await fetch(finalResponse.result.signed_url);
 	await fs.writeFile(output, contents.body || "");
 	logger.log(`Done!`);
 }
@@ -198,8 +198,8 @@ async function pollExport(
 	db: Database,
 	dumpOptions: {
 		tables: string[];
-		noSchema?: boolean;
-		noData?: boolean;
+		no_schema?: boolean;
+		no_data?: boolean;
 	},
 	currentBookmark: string | undefined,
 	num_parts_uploaded = 0
@@ -238,7 +238,7 @@ async function pollExport(
 		return response;
 	} else if (response.status === "error") {
 		throw new APIError({
-			text: response.errors.join("\n"),
+			text: response.error,
 			notes: response.messages.map((text) => ({ text })),
 		});
 	} else {
